@@ -1,5 +1,7 @@
 FROM mautic/mautic:latest
-
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libavif15 \
+ && rm -rf /var/lib/apt/lists/*
 ARG MAUTIC_DB_HOST
 ARG MAUTIC_DB_PORT
 ARG MAUTIC_DB_USER
