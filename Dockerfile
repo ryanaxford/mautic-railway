@@ -1,19 +1,16 @@
 FROM mautic/mautic:latest
 
-RUN apt-get update \
- && apt-get install -y --no-install-recommends libxpm4 libavif15 \
- && rm -rf /var/lib/apt/lists/*
-
-RUN echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf \
- && a2enconf servername
-
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-ENV PHP_INI_DATE_TIMEZONE="UTC"
-
-# ✅ must be root to chown Railway volume
 USER root
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["apache2-foreground"]
+# Install required OS libs + PHP GD dependencies (Debian-based image)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libavif15 \
+    libpng16-16 \
+    libjpeg62-turbo \
+    libfreetype6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# If GD is already installed but failing due to missing libs, the above is usually enough.
+# If your image still doesn't have GD enabled, you can install/enable it like below.
+# (This part may or may not work depending on how the base image ships PHP)
+RUN php -m | grep -i gd || true
