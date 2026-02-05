@@ -12,4 +12,8 @@ RUN chmod +x /docker-entrypoint.sh
 
 ENV PHP_INI_DATE_TIMEZONE="UTC"
 
+# ✅ must be root to chown Railway volume
+USER root
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
