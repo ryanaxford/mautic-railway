@@ -7,8 +7,9 @@ RUN apt-get update \
 RUN echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf \
  && a2enconf servername
 
-#  ensure cache/log folders exist and are writable
-RUN mkdir -p /var/www/html/var/cache /var/www/html/var/logs /var/www/html/docroot/media \
- && chmod -R 775 /var/www/html/var /var/www/html/docroot/media
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 ENV PHP_INI_DATE_TIMEZONE="UTC"
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
